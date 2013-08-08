@@ -140,6 +140,9 @@ class SecureSession
         }
         else
         {
+            // register shutdown
+            register_shutdown_function('session_write_close');
+
             // set ini parameters for this session
             $this->_setSessionConfiguration();
 
@@ -299,7 +302,7 @@ class SecureSession
         $encrypted = $this->_encrypt($data);
 
         $sess_file = $this->_path . $this->_name . "_$id";
-        $bytes = file_put_contents($sess_file, $encrypted['hmac'] . ':' . base64_encode($encrypted['iv']) . ':' . base64_encode($encrypted['encrypetd_data']), LOCK_EX);
+        $bytes = file_put_contents($sess_file, $encrypted['hmac'] . ':' . base64_encode($encrypted['iv']) . ':' . base64_encode($encrypted['encrypted_data']), LOCK_EX);
         return ($bytes !== false);  
     }
 
@@ -362,7 +365,7 @@ class SecureSession
             $iv
         );
         $hmac  = hash_hmac(self::ALGORITHM_HASH, $iv . self::ALGORITHM_ENCRYPTION . $encrypted, $this->_auth);
-        return array('hmac' => $hmac, 'iv' => $iv, 'encryped_data' => $encrypted);
+        return array('hmac' => $hmac, 'iv' => $iv, 'encrypted_data' => $encrypted);
     }
 
     /**

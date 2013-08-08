@@ -29,6 +29,13 @@ if(!isset($_SESSION['original_starttime']))
     $_SESSION['original_session_id']    = session_id();
 }
 
-session_regenerate_id(true);
+if(session_id() == $_SESSION['original_session_id'])
+{
+    session_regenerate_id(true);
+    echo 'Regenerating ';
+}
 
-var_dump(session_id(), $_SESSION);
+echo 'Reload this page to see session is stable after initial session regeneration.<br/>';
+echo 'Current Session ID: ' . session_id() . '<br/>';
+echo '$_SESSION: ';
+var_dump($_SESSION);
